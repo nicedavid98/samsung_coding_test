@@ -48,7 +48,7 @@ def is_movable(knight_idx, dir):
 
 
 def find_next_knight(knight_idx, dir):
-    next_knights = []  # 현재 knight_idx가 움직이면, 부딪히게 될 기사들의 인덱스 저장
+    next_knights_list = []  # 현재 knight_idx가 움직이면, 부딪히게 될 기사들의 인덱스 저장
 
     curr_r, curr_c, curr_h, curr_w, curr_k = knights[knight_idx]
 
@@ -61,6 +61,8 @@ def find_next_knight(knight_idx, dir):
     for cand_idx in range(len(knights)):
         if cand_idx == knight_idx:  # 자기 자신은 제외
             continue
+        if knights[cand_idx][4] <= 0:  # 살아 있어야..
+            continue
 
         cand_r, cand_c, cand_h, cand_w, cand_k = knights[cand_idx]
 
@@ -71,10 +73,9 @@ def find_next_knight(knight_idx, dir):
 
         for pos in pos_list:
             if pos in cand_pos_list:
-                if knights[cand_idx][4] > 0:  # 살아 있어야..
-                    next_knights.append(cand_idx)
+                next_knights_list.append(cand_idx)
 
-    return next_knights
+    return next_knights_list
 
 
 def cnt_trap(knight_idx, dir):
@@ -88,16 +89,6 @@ def cnt_trap(knight_idx, dir):
     return cnt
 
 
-# def print_map():
-#     b = [[0 for _ in range(L)] for _ in range(L)]
-#     for k in range(len(knights)):
-#         r,c,h,w,kk = knights[k]
-#         for i in range(r, r+h):
-#             for j in range(c, c+w):
-#                 b[i][j] = k + 1
-#     for row in b:
-#         print(row)
-
 # 메인 turn 시작 !!
 for turn in range(Q):
     start_knight, turn_dir = insts[turn]
@@ -106,7 +97,7 @@ for turn in range(Q):
     if knights[start_knight][4] <= 0:
         continue
 
-    # 모든 기사들이 다 움직일 수 있다면, 이를 처리해 주기 위해, 움직일 대상이 되는 기사 인덱스를 모두 표기
+    # 움직일 수 있다면, 이를 처리해 주기 위해, 움직일 대상이 되는 기사 인덱스를 모두 표기
     moved_knights = []
 
     # queue를 생성하고, 명령을 받는 기사를 enqueue
@@ -125,7 +116,7 @@ for turn in range(Q):
         # 움직일 수 있나요? (벽, 격자 밖)
         if not is_movable(curr_knight, turn_dir):
             can_move = False
-            continue
+            break
 
         moved_knights.append(curr_knight)
 
@@ -147,6 +138,8 @@ for turn in range(Q):
 score = 0
 for k in range(len(knights)):
     if knights[k][4] > 0:
-        score += first_knights[k][4] - knights[k][4]
+        score += (first_knights[k][4] - knights[k][4])
 
 print(score)
+
+
