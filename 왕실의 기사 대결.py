@@ -74,6 +74,7 @@ def find_next_knight(knight_idx, dir):
         for pos in pos_list:
             if pos in cand_pos_list:
                 next_knights_list.append(cand_idx)
+                break
 
     return next_knights_list
 
